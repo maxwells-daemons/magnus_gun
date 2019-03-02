@@ -18,7 +18,7 @@ bool doing_left = false;
 
 void setup() {
     Serial.begin(9600);
-    calibrate();
+    /* calibrate(); */
 }
 
 void loop() {
