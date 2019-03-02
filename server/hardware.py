@@ -5,8 +5,8 @@ Hardware abstraction layer for communicating with the Arduino.
 import serial
 
 # Hardware constants
-_speed_max = 2000
-_speed_min = 750
+_speed_max = 2000  # True max: 2000
+_speed_min = 700
 _speed_range = _speed_max - _speed_min
 _baud_rate = 9600
 
@@ -14,7 +14,7 @@ _baud_rate = 9600
 _serial_port = None
 
 
-def init(port='/dev/ttyUSB0'):
+def init(port='/dev/ttyACM0'):
     '''
     Initialize the hardware.
 
@@ -25,7 +25,7 @@ def init(port='/dev/ttyUSB0'):
     '''
     global _serial_port
     _serial_port = serial.Serial(port, baudrate=_baud_rate)
-    _serial_port.open()
+    #  _serial_port.open()
 
 
 def cleanup():
@@ -59,3 +59,5 @@ def set_speeds(speed_left, speed_right):
 
     serial_string = '{} {}'.format(speed_left, speed_right)
     _serial_port.write(str.encode(serial_string))
+
+    print('Sending string:', serial_string)

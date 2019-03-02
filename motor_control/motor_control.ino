@@ -5,39 +5,43 @@
 
 #include <Servo.h>
 
-#define PIN_LEFT  11
+#define PIN_LEFT  9
 #define PIN_RIGHT 10
 
 #define CALIBRATION_DELAY 3000
 #define MOTOR_MAX_US 2000
 #define MOTOR_MIN_US 700
 
-Servo motor_left;
-Servo motor_right;
-bool doing_left = false;
+Servo motorLeft;
+Servo motorRight;
 
 void setup() {
     Serial.begin(9600);
+
+    Serial.println("Attaching motors");
+    motorLeft.attach(PIN_LEFT);
+    motorRight.attach(PIN_RIGHT);
+
     /* calibrate(); */
 }
 
 void loop() {
-    if (Serial.available() > 0) {
-        int nextSpeed = Serial.parseInt();
+    if (Serial.available() >= 2 * sizeof(int)) {
+        int speedLeft = Serial.parseInt();
+        int speedRight = Serial.parseInt();
 
-        if (doing_left) {
-            Serial.print("Setting left speed: ");
-            Serial.println(nextSpeed, DEC);
-
-            motor_left.writeMicroseconds(nextSpeed);
-        } else {
-            Serial.print("Setting right speed: ");
-            Serial.println(nextSpeed, DEC);
-
-            motor_right.writeMicroseconds(nextSpeed);
+        if (speedLeft <= 0 || speedRight <= 0) { // Detect timeout
+            return;
         }
 
-        doing_left = !doing_left;
+        motorLeft.writeMicroseconds(speedLeft);
+        motorRight.writeMicroseconds(speedRight);
+
+        Serial.print("Set speeds: ");
+        Serial.print(speedLeft, DEC);
+        Serial.print(", ");
+        Serial.print(speedRight, DEC);
+        Serial.println("");
     }
 
     delay(10);
@@ -45,26 +49,22 @@ void loop() {
 
 void calibrate() {
     // Calibrate
-    Serial.println("Attaching motor");
-    motor_left.attach(PIN_LEFT);
-    motor_right.attach(PIN_RIGHT);
-
     Serial.println("Forward calibration");
-    motor_left.writeMicroseconds(MOTOR_MAX_US);
-    motor_right.writeMicroseconds(MOTOR_MAX_US);
+    motorLeft.writeMicroseconds(MOTOR_MAX_US);
+    motorRight.writeMicroseconds(MOTOR_MAX_US);
     delay(CALIBRATION_DELAY);
 
     Serial.println("Zero calibration");
-    motor_left.writeMicroseconds(MOTOR_MIN_US);
-    motor_right.writeMicroseconds(MOTOR_MIN_US);
+    motorLeft.writeMicroseconds(MOTOR_MIN_US);
+    motorRight.writeMicroseconds(MOTOR_MIN_US);
     delay(CALIBRATION_DELAY);
 
     Serial.println("Spinning up and down");
-    motor_left.writeMicroseconds(1000);
-    motor_right.writeMicroseconds(1000);
+    motorLeft.writeMicroseconds(1000);
+    motorRight.writeMicroseconds(1000);
     delay(500);
-    motor_left.writeMicroseconds(790);
-    motor_right.writeMicroseconds(790);
+    motorLeft.writeMicroseconds(790);
+    motorRight.writeMicroseconds(790);
 
     Serial.println("Done with setup");
 }

@@ -14,7 +14,7 @@ def main():
     Server main program.
     '''
     print('Connecting to hardware...')
-    hardware.init()
+    #  hardware.init()
 
     # Example from:
     # https://stackoverflow.com/questions/2601194/
