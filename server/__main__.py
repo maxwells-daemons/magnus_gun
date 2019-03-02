@@ -1,4 +1,4 @@
-from server import hardware, aruco_markers
+from server import hardware, aruco_markers, detect_person
 
 import numpy as np
 import cv2
@@ -6,7 +6,8 @@ import cv2
 # Parameters
 # 0: laptop
 # 2: usb webcam
-camera_idx = 2
+camera_idx = 0
+#  blob_detector = cv2.SimpleBlobDetector()
 
 
 def main():
@@ -34,11 +35,22 @@ def main():
         camera_success, frame = camera.read()
         preview = np.copy(frame)
 
-        # Find aruco markers
+        # Find and draw aruco markers
         marker_corners, marker_ids, _ = aruco_markers.get_all_markers(frame)
-
-        # Draw aruco markers
         cv2.aruco.drawDetectedMarkers(preview, marker_corners, marker_ids)
+
+        # Find and draw person bounding boxes
+        #  (boxes, weights) = detect_person.detect_people(frame)
+        #  for (x, y, w, h) in boxes:
+        #      cv2.rectangle(preview, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+        # Filter for balls
+        #  low_color = np.array([70, 90, 180])
+        #  high_color = np.array([200, 255, 255])
+        #  filtered = cv2.inRange(frame, low_color, high_color)
+        #  overlay = np.zeros_like(frame)
+        #  overlay[:, :, 2] = filtered
+        #  preview = (preview * 1.0 / 255) + (overlay * 0.7 / 255)
 
         # Display frame
         cv2.imshow('Video', preview)
