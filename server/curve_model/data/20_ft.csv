@@ -1,0 +1,5 @@
+left_wheel,right_wheel,deflection
+2000,2000,0
+800,2000,-32
+2000,800,20.5
+
